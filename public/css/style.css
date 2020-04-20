@@ -1,0 +1,44 @@
+body {
+    background-color: rgb(13, 172, 172);
+}
+
+.container {
+    background-color: azure;
+    width: 300px;
+    height: 100%;
+    margin: auto;
+    padding: 5px;
+}
+
+/* Entrada de Dados */
+.entrada-dados {
+    background-color: rgb(184, 184, 184);
+    color: rgb(117, 117, 117);
+    width: 100%;
+    height: 50px;
+    margin-bottom: 5px;
+    border: none;
+    font-size: 20px;
+    text-align: center;
+}
+
+/* Recebe dados da lista */
+.lista {
+    background-color: cornflowerblue;
+    width: 100%;
+    height: 100%;
+    color: #ffffff;
+    font-size: 20px;
+}
+
+.container-tarefa:hover {
+    background-color: rgb(127, 184, 231);
+}
+
+.container-tarefa:active {
+    background-color: rgb(122, 195, 255);
+}
+
+.tarefa {
+    margin: 15px;
+}

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <link rel="stylesheet" href="./../css/style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+</head>
+<body>
+    <div class="container" id="container">
+        <div class="entrada-dados-container" id="entrada-dados-container">
+            <form action="./todo" method="POST">
+                <input type="text" class="entrada-dados" id="entrada-dados" name="task" placeholder="Nova tarefa...">
+            </form>
+        </div>
+        <div class="lista" id="lista">
+            <!-- Começa o FOREACH do PHP -->
+            <?php foreach ($list as $task): ?>
+                <div class="container-tarefa" id="container-tarefa">
+                    <input type="checkbox" class="tarefa" id="<?php echo $task['id'] ?>" name="tarefa" value="tarefa" onclick="deleteTask(this.id)">
+                    <?php echo $task['task'] ?>
+                </div>
+            <?php endforeach; ?>
+            <!-- Termina o FOREACH do PHP -->
+        </div>
+    </div>
+    <script src="./../script/script.js"></script>
+</body>
+</html>

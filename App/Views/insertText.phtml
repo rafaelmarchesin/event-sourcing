@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Publique seu Texto</title>
+</head>
+<body>
+    <h1>Página de Publicação de Texto</h1>
+    <h2>Aqui será inserido o formulário de escrita de texto e os botões de publicação</h2>
+
+    <div id="sample">
+
+        <!-- Observar o link: http://taylorlopes.com/1872/ -->
+
+        <script type="text/javascript" src="http://js.nicedit.com/nicEdit-latest.js"></script>
+        <script type="text/javascript">
+        //<![CDATA[
+                bkLib.onDomLoaded(function() { nicEditors.allTextAreas() });
+        //]]>
+        </script> 
+        <!-- Este editor é NicEdit: http://nicedit.com/demos.php -->
+        <textarea name="area2" style="width: 100%;">
+            Escreva aqui seu texto...
+        </textarea><br />
+    </div>
+
+    <!-- <script src="//cdn.ckeditor.com/4.14.0/standard/ckeditor.js"></script> -->
+
+    <p>Acesse um dos links a seguir:</p>
+    <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/todo">Lista de Tarefas</a></li>
+        <li><a href="/publish">Editor de Texto</a></li>
+    </ul>
+</body>
+</html>

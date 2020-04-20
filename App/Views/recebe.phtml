@@ -1,0 +1,8 @@
+<!-- Começa o FOREACH do PHP -->
+<?php foreach ($list as $task): ?>
+    <div class="container-tarefa" id="container-tarefa">
+        <input type="checkbox" class="tarefa" id="<?php echo $task['id'] ?>" name="tarefa" value="tarefa" onclick="deleteTask(this.id)">
+        <?php echo $task['task'] ?>
+    </div>
+<?php endforeach; ?>
+<!-- Termina o FOREACH do PHP -->
