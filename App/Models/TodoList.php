@@ -26,7 +26,7 @@ class TodoList
     public function getList()
     {
         $db = $this->getDB();
-        return $db->query('SELECT * FROM todo_list_table WHERE done = 0;');
+        return $db->query('SELECT * FROM todo_list_table WHERE done = 0 AND version = 1;');
     }
 
     /**
@@ -38,9 +38,9 @@ class TodoList
 
         //Identifica o registro que tenha o maior valor de "task_id"
         $max_task_id = $db->query('SELECT MAX(task_id) FROM todo_list_table WHERE version = 1;');
-        //var_dump($max_task_id);
+
         $max_task_id = mysqli_fetch_array($max_task_id);
-        //var_dump($max_task_id);
+
 
         //Adidiona mais uma unidade ao max_task_id
         //O objetivo é gerar um task_id para a nova tarefa inserida no banco de dados
@@ -71,6 +71,7 @@ class TodoList
         $task = (int)$task;
         
         //Para implementar o Event Sourcing, não é mais feito o UPDATE, mas, sim, a criação de um novo registro
+        //A query abaixo, portanto, foi descartada
         //$query = "UPDATE todo_list_table SET done=1 WHERE id={$task};";
 
         //A query abaixo é responsável por selecionar o registro com última versão da tarefa
