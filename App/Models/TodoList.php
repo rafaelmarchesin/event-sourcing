@@ -36,9 +36,19 @@ class TodoList
     {
         $db = $this->getDB();
 
+        //Identifica o registro que tenha o maior valor de "task_id"
+        $max_task_id = $db->query('SELECT MAX(task_id) FROM todo_list_table WHERE version = 1;');
+        $max_task_id = mysqli_fetch_array($max_task_id);
+
+        //Adidiona mais uma unidade ao max_task_id
+        //O objetivo é gerar um task_id para a nova tarefa inserida no banco de dados
+        //O task_id é responsável por controlar todos os registros relacionados à essa tarefa
+        $new_task_id = $max_task_id['MAX(task_id)'] + 1;
+
         $task = isset($_POST['task']) ? $_POST['task'] : null;
         
-        $query = 'INSERT INTO todo_list_table (task) VALUES ("'. $task .'")';
+        //Query responsável por gravar a nova tarefa no Banco de Dados
+        $query = 'INSERT INTO todo_list_table (task_id, task) VALUES ("'. $new_task_id .'", "'. $task .'")';
         
         //Se o Get não receber nada, ele não roda a Query.
         if ($task != null) {
