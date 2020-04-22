@@ -38,7 +38,9 @@ class TodoList
 
         //Identifica o registro que tenha o maior valor de "task_id"
         $max_task_id = $db->query('SELECT MAX(task_id) FROM todo_list_table WHERE version = 1;');
+        //var_dump($max_task_id);
         $max_task_id = mysqli_fetch_array($max_task_id);
+        //var_dump($max_task_id);
 
         //Adidiona mais uma unidade ao max_task_id
         //O objetivo é gerar um task_id para a nova tarefa inserida no banco de dados
@@ -68,8 +70,19 @@ class TodoList
         $task = isset($_POST['id']) ? $_POST['id'] : null;
         $task = (int)$task;
         
-        $query = "UPDATE todo_list_table SET done=1 WHERE id={$task};";
-        
+        //Para implementar o Event Sourcing, não é mais feito o UPDATE, mas, sim, a criação de um novo registro
+        //$query = "UPDATE todo_list_table SET done=1 WHERE id={$task};";
+
+        //A query abaixo é responsável por selecionar o registro com última versão da tarefa
+        $task_id = $db->query('SELECT * FROM todo_list_table WHERE task_id = ' . $task .' AND version = (SELECT MAX(version) FROM todo_list_table WHERE task_id = ' . $task . ');');
+
+        //Converte o registro selellcionado em array
+        $array_task_id = mysqli_fetch_array($task_id);
+
+        //A query abaixo utiliza os dados do último registro relacionado à tarefa para inserir um novo registro atualizado
+        //sendo que "done" igual a "1" significa que a tarefa foi concluída
+        $query = 'INSERT INTO todo_list_table (task_id, version, task, done) VALUES ("' . $array_task_id['task_id'] .'",' . ($array_task_id['version'] + 1) . ', "'. $array_task_id['task'] .'", 1)';
+
         //Se o Get não receber nada, ele não roda a Query.
         if ($task != null) {
             $db->query($query);
