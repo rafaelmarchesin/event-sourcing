@@ -26,7 +26,7 @@ class TodoList
     public function getList()
     {
         $db = $this->getDB();
-        return $db->query('SELECT * FROM todo_list_table WHERE done = 0 AND version = 1;');
+        return $db->query('SELECT * FROM todo_list_projections WHERE done = 0 AND version = 1;');
     }
 
     /**
@@ -120,17 +120,15 @@ class TodoList
             $recent_version = $db->query($query_recent_version);
             $recent_version = mysqli_fetch_array($recent_version);
             
-            //Usado apenas para realizar a validação
             $task_in_projections = $db->query('SELECT * FROM todo_list_projections WHERE task_id =' . $task);
             $task_in_projections = mysqli_fetch_array($task_in_projections);
 
             if ($task_in_projections != null)
             {
-                //Se não for nulo, apenas atualiza o registro na tabela projections
+
                 $db->query('UPDATE todo_list_projections SET version = ' . $recent_version['version'] . ', done = ' . $recent_version['done'] . '  WHERE task_id=' . $task . ';');
 
             } else {
-                //Se for nulo, cria um novo registro na tabela projections
                 $db->query('INSERT INTO todo_list_projections (
                     task_id, 
                     version, 
