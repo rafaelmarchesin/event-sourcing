@@ -4,6 +4,7 @@ task_id INT (8) NOT NULL,
 version INT (1) default 1,
 task VARCHAR(140) NOT NULL,
 done INT(1) default 0,
+event_type VARCHAR(140),
 date_time DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -13,5 +14,6 @@ task_id INT (8) NOT NULL,
 version INT (1) default 1,
 task VARCHAR(140),
 done INT(1) default 0,
+event_type VARCHAR(140),
 date_time DATETIME DEFAULT CURRENT_TIMESTAMP
 );

@@ -49,7 +49,7 @@ class TodoList
         $task = isset($_POST['task']) ? $_POST['task'] : null;
         
         //Query responsável por gravar a nova tarefa no Banco de Dados
-        $query = 'INSERT INTO todo_list_table (task) VALUES ("'. $task .'")';
+        $query = 'INSERT INTO todo_list_table (task, event_type) VALUES ("'. $task .'", "TaskCreated")';
         
         //Se o Get não receber nada, ele não roda a Query.
         if ($task != null) {
@@ -60,10 +60,27 @@ class TodoList
             //Atualiza o task_id com o mesmo valor do id da tarefa atual
             $set_task_id = $db->query('SELECT MAX(id) FROM todo_list_table;');
             $set_task_id = mysqli_fetch_array($set_task_id);
-            $db->query('UPDATE todo_list_table SET task_id =' . $set_task_id['MAX(id)'] . ' WHERE id = ' . $set_task_id['MAX(id)']);
+            
+            $db->query('UPDATE 
+                todo_list_table 
+            SET 
+                task_id =' . $set_task_id['MAX(id)'] . ' 
+            WHERE 
+                id = ' . $set_task_id['MAX(id)']);
 
             //Cria a tarefa na tabela de projeções a partir da versão criada na tabela de eventos
-            $query_new_task = 'SELECT * FROM todo_list_table WHERE task_id = ' . $set_task_id['MAX(id)'] .' AND version = (SELECT MAX(version) FROM todo_list_table WHERE task_id = ' . $set_task_id['MAX(id)'] . ');';
+            $query_new_task = 'SELECT * FROM todo_list_table 
+            WHERE 
+                task_id = ' . $set_task_id['MAX(id)'] .' 
+            AND 
+                version = (
+                SELECT 
+                    MAX(version) 
+                FROM 
+                    todo_list_table 
+                WHERE 
+                    task_id = ' . $set_task_id['MAX(id)'] . ');';
+            
             $new_task = $db->query($query_new_task);
             $new_task = mysqli_fetch_array($new_task);
 
@@ -71,13 +88,15 @@ class TodoList
                 task_id, 
                 version, 
                 task, 
-                done
+                done,
+                event_type
             ) 
             VALUES (
                 "'. $new_task['task_id'] .'", 
                 ' . $new_task['version'] . ', 
                 "' . $new_task['task'] . '", 
-                ' . $new_task['done'] . '
+                ' . $new_task['done'] . ',
+                "TaskCreated"
             )');
 
         }
@@ -100,14 +119,34 @@ class TodoList
         //$query = "UPDATE todo_list_table SET done=1 WHERE id={$task};";
 
         //A query abaixo é responsável por selecionar o registro com última versão da tarefa
-        $task_id = $db->query('SELECT * FROM todo_list_table WHERE task_id = ' . $task .' AND version = (SELECT MAX(version) FROM todo_list_table WHERE task_id = ' . $task . ');');
+        $task_id = $db->query('SELECT * FROM 
+            todo_list_table 
+        WHERE 
+            task_id = ' . $task .' 
+        AND 
+            version = (SELECT MAX(version) 
+        FROM 
+            todo_list_table 
+        WHERE 
+            task_id = ' . $task . ');');
 
         //Converte o registro selellcionado em array
         $array_task_id = mysqli_fetch_array($task_id);
 
         //A query abaixo utiliza os dados do último registro relacionado à tarefa para inserir um novo registro atualizado
         //sendo que "done" igual a "1" significa que a tarefa foi concluída
-        $query = 'INSERT INTO todo_list_table (task_id, version, task, done) VALUES ("' . $array_task_id['task_id'] .'",' . ($array_task_id['version'] + 1) . ', "'. $array_task_id['task'] .'", 1)';
+        $query = 'INSERT INTO todo_list_table (
+                task_id, 
+                version, 
+                task, 
+                done, 
+                event_type) 
+            VALUES (
+                "' . $array_task_id['task_id'] .'",
+                ' . ($array_task_id['version'] + 1) . ', 
+                "'. $array_task_id['task'] .'", 
+                1, 
+                "TaskDeleted")';
 
         //Se o Get não receber nada, ele não roda a Query.
         if ($task != null) {
@@ -116,7 +155,18 @@ class TodoList
             /**
              * As querys abaixo são responsáveis por guardar os dados na tabela de projeções
             */
-            $query_recent_version = 'SELECT * FROM todo_list_table WHERE task_id = ' . $task .' AND version = (SELECT MAX(version) FROM todo_list_table WHERE task_id = ' . $task . ');';
+            $query_recent_version = 'SELECT * FROM todo_list_table 
+            WHERE 
+                task_id = ' . $task .' 
+            AND 
+                version = (
+                SELECT 
+                    MAX(version) 
+                FROM 
+                    todo_list_table 
+                WHERE 
+                    task_id = ' . $task . ');';
+            
             $recent_version = $db->query($query_recent_version);
             $recent_version = mysqli_fetch_array($recent_version);
             
@@ -126,20 +176,28 @@ class TodoList
             if ($task_in_projections != null)
             {
 
-                $db->query('UPDATE todo_list_projections SET version = ' . $recent_version['version'] . ', done = ' . $recent_version['done'] . '  WHERE task_id=' . $task . ';');
+                $db->query('UPDATE 
+                    todo_list_projections 
+                SET 
+                    version = ' . $recent_version['version'] . ', 
+                    done = ' . $recent_version['done'] . ', 
+                    event_type = "TaskDeleted"  
+                WHERE task_id=' . $task . ';');
 
             } else {
                 $db->query('INSERT INTO todo_list_projections (
                     task_id, 
                     version, 
                     task, 
-                    done
+                    done,
+                    event_type
                 ) 
                 VALUES (
                     "'. $recent_version['task_id'] .'", 
                     ' . $recent_version['version'] . ', 
                     "' . $recent_version['task'] . '", 
-                    ' . $recent_version['done'] . '
+                    ' . $recent_version['done'] . ',
+                    "TaskDeleted"
                 )');
             }
 
